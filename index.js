@@ -40,7 +40,13 @@ async function run() {
     const userCollection = client.db('visaDB').collection('users');
 
 
-    app.post('/visa', async (req, res) => {
+    app.get('/all', async (req, res) => {
+      const cursor = visaCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+  });
+
+    app.post('/all', async (req, res) => {
         const newVisa = req.body;
         console.log('Adding new Visa', newVisa)
 
