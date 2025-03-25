@@ -38,6 +38,8 @@ async function run() {
     const visaCollection = database.collection('visa');
 
     const applicationCollection = client.db('visaDB').collection('applications');
+    const userCollection = client.db('visaDB').collection('users');
+
 
 
     app.get('/all', async (req, res) => {
@@ -74,6 +76,45 @@ app.get('/applications', async (req, res) => {
       const result = await applicationCollection.insertOne(newApplication);
       res.send(result);
   });
+
+  app.get('/applications/:email', async (req, res) => {
+  const userEmail = req.params.email;
+  const query = { email: userEmail };
+  const result = await applicationCollection.find(query).toArray();
+  res.send(result);
+});
+
+
+app.delete('/applications/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await applicationCollection.deleteOne(query);
+  res.send(result);
+});
+
+
+app.get('/users', async(req,res)=>{
+  const cursor= userCollection.find();
+  const result= await cursor.toArray();
+  res.send(result);
+})
+app.post('/users', async(req,res)=>{
+  const newUser = req.body;
+  console.log('creating new user',newUser);
+  const result= await userCollection.insertOne(newUser);
+  res.send(result);
+})
+app.patch('/users',async(req,res)=>{
+  const email= req.body.email;
+  const filter ={email};
+  const updatedDoc = {
+      $set:{
+          lastSignInTime: req.body?.lastSignInTime
+      }
+  }
+  const result= await userCollection.updateOne(filter,updatedDoc);
+  res.send(result);
+})
 
   } finally {
     // Ensures that the client will close when you finish/error
