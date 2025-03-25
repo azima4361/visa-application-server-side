@@ -37,7 +37,7 @@ async function run() {
     const database = client.db('visaDB');
     const visaCollection = database.collection('visa');
 
-    const userCollection = client.db('visaDB').collection('users');
+    const applicationCollection = client.db('visaDB').collection('applications');
 
 
     app.get('/all', async (req, res) => {
@@ -46,6 +46,15 @@ async function run() {
       res.send(result);
   });
 
+  app.get('/visa/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+    const result = await visaCollection.findOne(query);
+    res.send(result);
+})
+
+
+
     app.post('/all', async (req, res) => {
         const newVisa = req.body;
         console.log('Adding new Visa', newVisa)
@@ -53,6 +62,19 @@ async function run() {
         const result = await visaCollection.insertOne(newVisa);
         res.send(result);
     });
+app.get('/applications', async (req, res) => {
+  const cursor = applicationCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+});
+    app.post('/applications', async (req, res) => {
+      const newApplication = req.body;
+      console.log('Adding new Visa application', newApplication)
+
+      const result = await applicationCollection.insertOne(newApplication);
+      res.send(result);
+  });
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
