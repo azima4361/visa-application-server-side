@@ -46,6 +46,26 @@ async function run() {
       const cursor = visaCollection.find();
       const result = await cursor.toArray();
       res.send(result);
+    //    const limit = parseInt(req.query.limit) || 6; // Default to 6
+    // const visas = await visaCollection
+    //   .find({})
+    //   .sort({ createdAt: -1 }) // Sort by newest first
+    //   .limit(limit) // Limit to 6 results
+    //   .toArray();
+
+    //   res.json(visas);
+  });
+
+  app.get('/all-visas', async (req, res) => {
+     
+       const limit = parseInt(req.query.limit) || 6; 
+    const visas = await visaCollection
+      .find({})
+      .sort({ createdAt: -1 }) 
+      .limit(limit) 
+      .toArray();
+
+      res.json(visas);
   });
 
   app.get('/visa/:id', async (req, res) => {
@@ -63,7 +83,10 @@ app.get('/all/:id', async (req, res) => {
 })
 
     app.post('/all', async (req, res) => {
-        const newVisa = req.body;
+        const newVisa = {
+          ...req.body,
+        createdAt: new Date()
+        }
         console.log('Adding new Visa', newVisa)
 
         const result = await visaCollection.insertOne(newVisa);
@@ -71,21 +94,6 @@ app.get('/all/:id', async (req, res) => {
     });
 
    
-    
-
-
-    // app.put('/all/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: new ObjectId(id) };
-    //   const options = { upsert: true };
-    //   const updatedDoc = {
-    //       $set: req.body
-    //   }
-    
-    //   const result = await visaCollection.updateOne(filter, updatedDoc, options )
-    
-    //   res.send(result);
-    // })
 
     app.patch("/all/:id", async(req, res) => {
       const id = req.params.id;
@@ -178,7 +186,7 @@ app.get('/all/email/:email', async (req, res) => {
   res.send(result);
 })
 
-
+ 
 
 app.get('/users', async(req,res)=>{
   const cursor= userCollection.find();
