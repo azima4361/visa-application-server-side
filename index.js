@@ -46,14 +46,7 @@ async function run() {
       const cursor = visaCollection.find();
       const result = await cursor.toArray();
       res.send(result);
-    //    const limit = parseInt(req.query.limit) || 6; // Default to 6
-    // const visas = await visaCollection
-    //   .find({})
-    //   .sort({ createdAt: -1 }) // Sort by newest first
-    //   .limit(limit) // Limit to 6 results
-    //   .toArray();
-
-    //   res.json(visas);
+    
   });
 
   app.get('/all-visas', async (req, res) => {
@@ -193,6 +186,14 @@ app.get('/users', async(req,res)=>{
   const result= await cursor.toArray();
   res.send(result);
 })
+
+app.get('/users/:email', async (req, res) => {
+  const userEmail = req.params.email;
+  const query = { email: userEmail };
+  const result = await userCollection.find(query).toArray();
+  res.send(result);
+})
+
 app.post('/users', async(req,res)=>{
   const newUser = req.body;
   console.log('creating new user',newUser);
